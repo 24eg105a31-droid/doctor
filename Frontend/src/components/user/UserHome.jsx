@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Badge, Row } from 'antd';
 import Notification from '../common/Notification';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import MedicationIcon from '@mui/icons-material/Medication';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -81,15 +80,15 @@ const UserHome = () => {
                         <CalendarMonthIcon className='icon' /><Link>Home</Link>
                      </div> */}
                      <div className={`menu-items ${activeMenuItem === 'userappointments' ? 'active' : ''}`} onClick={() => handleMenuItemClick('userappointments')}>
-                        <CalendarMonthIcon className='icon' /><Link>Appointments</Link>
+                        <CalendarMonthIcon className='icon' /><span>Appointments</span>
                      </div>
                      {userdata.isdoctor === true ? <></> : <div className={`menu-items ${activeMenuItem === 'applyDoctor' ? 'active' : ''}`} onClick={() => handleMenuItemClick('applyDoctor')}>
-                        <MedicationIcon className='icon' /><Link>Apply doctor</Link>
+                        <MedicationIcon className='icon' /><span>Apply doctor</span>
                      </div>}
                      
                      
                      <div className="menu-items" onClick={logout}>
-                        <LogoutIcon className='icon' /><Link>Logout</Link>
+                        <LogoutIcon className='icon' /><span>Logout</span>
                      </div>
                   </div>
                </div>
