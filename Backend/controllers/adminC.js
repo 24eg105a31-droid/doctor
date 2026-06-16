@@ -25,10 +25,8 @@ const getAllDoctorsControllers = async (req, res) => {
       data: docUsers,
     });
   } catch (error) {
-    console
-      .log(error)
-      .status(500)
-      .send({ message: "something went wrong", success: false });
+    console.log(error);
+    return res.status(500).send({ message: "something went wrong", success: false });
   }
 };
 

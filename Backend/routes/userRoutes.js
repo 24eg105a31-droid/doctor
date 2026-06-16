@@ -46,7 +46,7 @@ router.post(
 
 router.get("/getuserappointments", authMiddleware, getAllUserAppointments);
 
-router.get("/getDocsforuser", authMiddleware, getDocsController)
+router.post("/getDocsforuser", authMiddleware, getDocsController)
 
 
 module.exports = router;

@@ -200,10 +200,8 @@ const getAllDoctorsControllers = async (req, res) => {
       data: docUsers,
     });
   } catch (error) {
-    console
-      .log(error)
-      .status(500)
-      .send({ message: "something went wrong", success: false, error });
+    console.log(error);
+    return res.status(500).send({ message: "something went wrong", success: false, error });
   }
 };
 
@@ -321,6 +319,49 @@ const getDocsController = async (req, res) => {
 
 
 
+const downloadDocController = async (req, res) => {
+  const appointId = req.query.appointId;
+  try {
+    const appointment = await appointmentSchema.findById(appointId);
+
+    if (!appointment) {
+      return res.status(404).send({ message: "Appointment not found" });
+    }
+
+    const documentUrl = appointment.document?.path;
+
+    if (!documentUrl || typeof documentUrl !== "string") {
+      return res.status(404).send({ message: "Document URL is invalid", success: false });
+    }
+
+    const absoluteFilePath = path.join(__dirname, "..", documentUrl);
+
+    fs.access(absoluteFilePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        return res.status(404).send({ message: "File not found", success: false, error: err });
+      }
+
+      res.setHeader("Content-Disposition", `attachment; filename="${path.basename(absoluteFilePath)}"`);
+      res.setHeader("Content-Type", "application/octet-stream");
+
+      const fileStream = fs.createReadStream(absoluteFilePath);
+      fileStream.on('error', (error) => {
+        console.log(error);
+        return res.status(500).send({ message: "Error reading the document", success: false, error });
+      });
+      fileStream.pipe(res);
+
+      fileStream.on('end', () => {
+        console.log('File download completed.');
+        res.end();
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Something went wrong", success: false });
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
@@ -332,4 +373,5 @@ module.exports = {
   appointmentController,
   getAllUserAppointments,
   getDocsController,
+  downloadDocController,
 };
