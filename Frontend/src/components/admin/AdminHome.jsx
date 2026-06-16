@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
 import axios from 'axios';
-import * as CalendarMonthIconImport from '@mui/icons-material/CalendarMonth';
-import * as MedicationIconImport from '@mui/icons-material/Medication';
-import * as LogoutIconImport from '@mui/icons-material/Logout';
-import * as NotificationsIconImport from '@mui/icons-material/Notifications';
+import CalendarMonthIcon from '@mui/icons-material/esm/CalendarMonth.js';
+import MedicationIcon from '@mui/icons-material/esm/Medication.js';
+import LogoutIcon from '@mui/icons-material/esm/Logout.js';
+import NotificationsIcon from '@mui/icons-material/esm/Notifications.js';
 import { Badge } from 'antd';
 import Notification from '../common/Notification';
 import AdminUsers from './AdminUsers';
 import AdminDoctors from './AdminDoctors';
 import AdminAppointments from './AdminAppointments';
-
-const interopDefault = (mod) => (mod && mod.default) || mod;
-const CalendarMonthIcon = interopDefault(CalendarMonthIconImport);
-const MedicationIcon = interopDefault(MedicationIconImport);
-const LogoutIcon = interopDefault(LogoutIconImport);
-const NotificationsIcon = interopDefault(NotificationsIconImport);
 
 const AdminHome = () => {
    const [userdata, setUserData] = useState({})

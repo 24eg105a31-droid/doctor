@@ -41,14 +41,14 @@ const Login = () => {
         
         switch (type) {
           case "admin":
-            navigate("/adminHome")
+            navigate("/adminhome")
             break;
           case "user":
             navigate("/userhome")
             break;
 
           default:
-            navigate("/Login")
+            navigate("/login")
             break;
         }
       }
