@@ -26,7 +26,7 @@ const UserAppointments = () => {
   const getUserAppointment = async () => {
     console.log(userid)
     try {
-      const res = await axios.get('http://localhost:8001/api/user/getuserappointments', {
+      const res = await axios.get('http://localhost:2000/api/user/getuserappointments', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -48,7 +48,7 @@ const UserAppointments = () => {
   const getDoctorAppointment = async () => {
     console.log(userid)
     try {
-      const res = await axios.get('http://localhost:8001/api/doctor/getdoctorappointments', {
+      const res = await axios.get('http://localhost:2000/api/doctor/getdoctorappointments', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -68,7 +68,7 @@ const UserAppointments = () => {
 
   const handleStatus = async (userid, appointmentId, status) => {
     try {
-      const res = await axios.post('http://localhost:8001/api/doctor/handlestatus', {
+      const res = await axios.post('http://localhost:2000/api/doctor/handlestatus', {
         userid,
         appointmentId,
         status,
@@ -103,7 +103,7 @@ const UserAppointments = () => {
 
   const handleDownload = async (url, appointId) => {
     try {
-      const res = await axios.get('http://localhost:8001/api/doctor/getdocumentdownload', {
+      const res = await axios.get('http://localhost:2000/api/doctor/getdocumentdownload', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
         },
