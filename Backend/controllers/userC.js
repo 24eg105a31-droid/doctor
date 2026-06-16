@@ -208,73 +208,96 @@ const getAllDoctorsControllers = async (req, res) => {
 ////getting appointments done in user
 const appointmentController = async (req, res) => {
   try {
-    let { userInfo, doctorInfo } = req.body;
-    userInfo = JSON.parse(userInfo)
-    doctorInfo = JSON.parse(doctorInfo)
+    // Determine userId from body, query, or decoded token
+    const userId = req.body.userId || req.query.userId || (req.user && req.user.id);
 
-    let documentData = null;
-    if (req.file) {
-      documentData = {
-        filename: req.file.filename,
-        path: `/uploads/${req.file.filename}`,
-      };
+    // Safely parse userInfo and doctorInfo which may be sent as JSON strings
+    let userInfo = req.body.userInfo;
+    let doctorInfo = req.body.doctorInfo;
+    try {
+      if (typeof userInfo === 'string') userInfo = JSON.parse(userInfo);
+    } catch (e) {
+      console.error('Failed to parse userInfo:', e.message);
+      return res.status(400).send({ success: false, message: 'Invalid userInfo' });
+    }
+    try {
+      if (typeof doctorInfo === 'string') doctorInfo = JSON.parse(doctorInfo);
+    } catch (e) {
+      console.error('Failed to parse doctorInfo:', e.message);
+      return res.status(400).send({ success: false, message: 'Invalid doctorInfo' });
     }
 
-    req.body.status = "pending";
-    
+    if (!userId || !req.body.doctorId || !userInfo || !doctorInfo || !req.body.date) {
+      return res.status(400).send({ success: false, message: 'Missing required appointment fields' });
+    }
+
+    const documentData = req.file
+      ? { filename: req.file.filename, path: `/uploads/${req.file.filename}` }
+      : null;
+
     const newAppointment = new appointmentSchema({
-      userId: req.body.userId,
+      userId: userId,
       doctorId: req.body.doctorId,
       userInfo: userInfo,
       doctorInfo: doctorInfo,
       date: req.body.date,
       document: documentData,
-      status: req.body.status,
+      status: 'pending',
     });
 
     await newAppointment.save();
 
-    const user = await userSchema.findOne({ _id: doctorInfo.userId });
-
-    if (user) {
-      user.notification.push({
-        type: "New Appointment",
-        message: `New Appointment request from ${userInfo.fullName}`,
-      });
-
-      await user.save();
+    // Notify doctor owner (if doctorInfo includes userId)
+    try {
+      const docOwnerId = doctorInfo && (doctorInfo.userId || doctorInfo.userID || doctorInfo.user);
+      if (docOwnerId) {
+        const ownerUser = await userSchema.findOne({ _id: docOwnerId });
+        if (ownerUser) {
+          ownerUser.notification = ownerUser.notification || [];
+          ownerUser.notification.push({
+            type: 'New Appointment',
+            message: `New Appointment request from ${userInfo.fullName}`,
+            data: { appointmentId: newAppointment._id },
+          });
+          await ownerUser.save();
+        }
+      }
+    } catch (notifyErr) {
+      console.error('Failed to notify doctor owner:', notifyErr);
     }
 
-    return res.status(200).send({
-      message: "Appointment book successfully",
-      success: true,
-    });
+    return res.status(200).send({ message: 'Appointment booked successfully', success: true });
   } catch (error) {
-    console.log(error);
+    console.error('Error in getAllUserAppointments:', error && (error.stack || error));
     res
       .status(500)
-      .send({ message: "something went wrong", success: false, error });
+      .send({ message: "something went wrong", success: false, error: error && error.message });
   }
 };
 
 const getAllUserAppointments = async (req, res) => {
   try {
+    console.log('getAllUserAppointments called. req.user:', req.user, 'req.query:', req.query, 'req.body:', req.body);
+    const userId = req.body.userId || req.query.userId || (req.user && req.user.id);
+    if (!userId) {
+      return res.status(400).send({ message: 'userId is required', success: false });
+    }
+
     const allAppointments = await appointmentSchema.find({
-      userId: req.body.userId,
+      userId: userId,
     });
 
-    const doctorIds = allAppointments.map(
-      (appointment) => appointment.doctorId
-    );
+    const doctorIds = allAppointments
+      .map((appointment) => appointment.doctorId)
+      .filter((id) => id !== null && id !== undefined);
 
-    const doctors = await docSchema.find({
-      _id: { $in: doctorIds },
-    });
+    const doctors = doctorIds.length > 0
+      ? await docSchema.find({ _id: { $in: doctorIds } })
+      : [];
 
     const appointmentsWithDoctor = allAppointments.map((appointment) => {
-      const doctor = doctors.find(
-        (doc) => doc._id.toString() === appointment.doctorId.toString()
-      );
+      const apptDocId = appointment.doctorId ? appointment.doctorId.toString() : '';
+      const doctor = doctors.find((doc) => doc._id.toString() === apptDocId);
       const docName = doctor ? doctor.fullName : "";
       return {
         ...appointment.toObject(),

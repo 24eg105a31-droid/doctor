@@ -18,24 +18,24 @@ const UserAppointments = () => {
       const { _id, isdoctor } = user;
       setUserId(_id);
       setType(isdoctor);
+      return { _id, isdoctor };
     } else {
       alert('No user to show');
+      return null;
     }
   };
 
-  const getUserAppointment = async () => {
-    console.log(userid)
+  const getUserAppointment = async (id) => {
+    const uid = id || userid;
+    console.log('fetching user appointments for', uid)
+    if (!uid) return;
     try {
       const res = await axios.get('http://localhost:2000/api/user/getuserappointments', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
         params: {
-          userId: userid,
+          userId: uid,
         },
       });
       if (res.data.success) {
-
         message.success(res.data.message);
         setUserAppointments(res.data.data);
       }
@@ -45,15 +45,14 @@ const UserAppointments = () => {
     }
   };
 
-  const getDoctorAppointment = async () => {
-    console.log(userid)
+  const getDoctorAppointment = async (id) => {
+    const uid = id || userid;
+    console.log('fetching doctor appointments for', uid)
+    if (!uid) return;
     try {
       const res = await axios.get('http://localhost:2000/api/doctor/getdoctorappointments', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
         params: {
-          userId: userid,
+          userId: uid,
         },
       });
       if (res.data.success) {
@@ -90,16 +89,25 @@ const UserAppointments = () => {
   };
 
   useEffect(() => {
-    getUser();
+    const u = getUser();
+    if (u) {
+      const { _id, isdoctor } = u;
+      if (isdoctor) {
+        getDoctorAppointment(_id);
+      } else {
+        getUserAppointment(_id);
+      }
+    }
   }, []);
 
   useEffect(() => {
+    // Keep the existing behavior for when `type` changes (if needed)
     if (type === true) {
       getDoctorAppointment();
     } else {
       getUserAppointment();
     }
-  }, [type])
+  }, [type]);
 
   const handleDownload = async (url, appointId) => {
     try {

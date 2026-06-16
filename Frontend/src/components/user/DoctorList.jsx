@@ -34,7 +34,9 @@ const DoctorList = ({ userDoctorId, doctor, userdata }) => {
       try {
          const formattedDateTime = dateTime.replace('T', ' ');
          const formData = new FormData();
-         formData.append('image', documentFile); // Make sure the field name matches the one on the server side
+         if (documentFile) {
+            formData.append('image', documentFile); // only append if file selected
+         }
          formData.append('date', formattedDateTime);
          formData.append('userId', userDoctorId);
          formData.append('doctorId', doctor._id);
@@ -50,12 +52,15 @@ const DoctorList = ({ userDoctorId, doctor, userdata }) => {
          
          if (res.data.success) {
             message.success(res.data.message)
+            setShow(false);
          }
          else {
-            message.error(res.data.success)
+            message.error(res.data.message || 'Booking failed')
          }
       } catch (error) {
          console.log(error)
+         const errMsg = error?.response?.data?.message || 'Something went wrong while booking';
+         message.error(errMsg);
       }
    }
    return (

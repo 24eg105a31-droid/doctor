@@ -27,7 +27,15 @@ const updateDoctorProfileController = async (req, res) => {
 
 const getAllDoctorAppointmentsController = async (req, res) => {
   try {
-    const doctor = await docSchema.findOne({ userId: req.body.userId });
+    const userId = req.body.userId || req.query.userId || (req.user && req.user.id);
+    if (!userId) {
+      return res.status(400).send({ message: 'userId is required', success: false });
+    }
+
+    const doctor = await docSchema.findOne({ userId: userId });
+    if (!doctor) {
+      return res.status(404).send({ message: 'Doctor not found for this user', success: false });
+    }
 
     const allApointments = await appointmentSchema.find({
       doctorId: doctor._id,
