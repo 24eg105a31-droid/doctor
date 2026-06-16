@@ -15,7 +15,7 @@ import DoctorList from './DoctorList';
 const UserHome = () => {
    const [doctors, setDoctors] = useState([])
    const [userdata, setUserData] = useState({})
-   const [activeMenuItem, setActiveMenuItem] = useState('');
+   const [activeMenuItem, setActiveMenuItem] = useState('userappointments');
 
    const getUser = () => {
       const user = JSON.parse(localStorage.getItem('userData'))

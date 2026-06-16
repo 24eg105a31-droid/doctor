@@ -91,7 +91,7 @@ const UserAppointments = () => {
 
   useEffect(() => {
     getUser();
-  }, [userid]);
+  }, []);
 
   useEffect(() => {
     if (type === true) {
