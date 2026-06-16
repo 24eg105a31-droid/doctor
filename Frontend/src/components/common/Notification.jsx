@@ -60,36 +60,49 @@ const Notification = () => {
       getUser()
    }, []);
 
-
-   return (
-      <div>
-         <h2 className='p-3 text-center'>Notification</h2>
-         <Tabs>
-            <Tabs.TabPane tab="unRead" key={0}>
+   const tabItems = [
+      {
+         label: 'unRead',
+         key: 'unRead',
+         children: (
+            <div>
                <div className="d-flex justify-content-end">
-                  <h4 style={{ cursor: 'pointer',  }} onClick={handleAllMarkRead} className="p-2">Mark all read</h4>
+                  <h4 style={{ cursor: 'pointer' }} onClick={handleAllMarkRead} className="p-2">Mark all read</h4>
                </div>
-               {user?.notification.map((notificationMsg) => (
-                  <div onClick={notificationMsg.onClickPath} className="card">
+               {user?.notification.map((notificationMsg, index) => (
+                  <div key={index} onClick={notificationMsg.onClickPath} className="card">
                      <div className="card-text">
                         {notificationMsg.message}
                      </div>
                   </div>
                ))}
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Read" key={1}>
+            </div>
+         ),
+      },
+      {
+         label: 'Read',
+         key: 'Read',
+         children: (
+            <div>
                <div className="d-flex justify-content-end">
                   <h4 style={{ cursor: 'pointer' }} onClick={handledeleteAllMark} className="p-2">delete all read</h4>
                </div>
-               {user?.seennotification.map((notificationMsg) => (
-                  <div style={{ cursor: 'pointer' }} className="card" >
+               {user?.seennotification.map((notificationMsg, index) => (
+                  <div key={index} style={{ cursor: 'pointer' }} className="card" >
                      <div className="card-text" onClick={() => navigate(notificationMsg.onClickPath)}>
                         {notificationMsg.message}
                      </div>
                   </div>
                ))}
-            </Tabs.TabPane>
-         </Tabs>
+            </div>
+         ),
+      },
+   ];
+
+   return (
+      <div>
+         <h2 className='p-3 text-center'>Notification</h2>
+         <Tabs items={tabItems} />
       </div>
    )
 }
