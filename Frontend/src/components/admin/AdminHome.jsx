@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react'
 
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import MedicationIcon from '@mui/icons-material/Medication';
-import LogoutIcon from '@mui/icons-material/Logout';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import * as CalendarMonthIconImport from '@mui/icons-material/CalendarMonth';
+import * as MedicationIconImport from '@mui/icons-material/Medication';
+import * as LogoutIconImport from '@mui/icons-material/Logout';
+import * as NotificationsIconImport from '@mui/icons-material/Notifications';
 import { Badge } from 'antd';
 import Notification from '../common/Notification';
 import AdminUsers from './AdminUsers';
 import AdminDoctors from './AdminDoctors';
 import AdminAppointments from './AdminAppointments';
+
+const interopDefault = (mod) => (mod && mod.default) || mod;
+const CalendarMonthIcon = interopDefault(CalendarMonthIconImport);
+const MedicationIcon = interopDefault(MedicationIconImport);
+const LogoutIcon = interopDefault(LogoutIconImport);
+const NotificationsIcon = interopDefault(NotificationsIconImport);
 
 const AdminHome = () => {
    const [userdata, setUserData] = useState({})
@@ -61,13 +66,13 @@ const AdminHome = () => {
                   </div>
                   <div className="menu">
                      <div className={`menu-items ${activeMenuItem === 'adminusers' ? 'active' : ''}`} onClick={() => handleMenuItemClick('adminusers')}>
-                        <CalendarMonthIcon className='icon' /><Link>Users</Link>
+                        <CalendarMonthIcon className='icon' /><span>Users</span>
                      </div>
                      <div className={`menu-items ${activeMenuItem === 'admindoctors' ? 'active' : ''}`} onClick={() => handleMenuItemClick('admindoctors')}>
-                        <MedicationIcon className='icon' /><Link>Doctor</Link>
+                        <MedicationIcon className='icon' /><span>Doctor</span>
                      </div>
-                     <div className="menu-items">
-                        <LogoutIcon className='icon' /><Link onClick={logout}>Logout</Link>
+                     <div className="menu-items" onClick={logout}>
+                        <LogoutIcon className='icon' /><span>Logout</span>
                      </div>
                   </div>
                </div>

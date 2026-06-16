@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { Badge, Row } from 'antd';
 import Notification from '../common/Notification';
 import axios from 'axios';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import MedicationIcon from '@mui/icons-material/Medication';
-import LogoutIcon from '@mui/icons-material/Logout';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import * as CalendarMonthIconImport from '@mui/icons-material/CalendarMonth';
+import * as MedicationIconImport from '@mui/icons-material/Medication';
+import * as LogoutIconImport from '@mui/icons-material/Logout';
+import * as NotificationsIconImport from '@mui/icons-material/Notifications';
 import { Container } from 'react-bootstrap';
 
 import ApplyDoctor from './ApplyDoctor';
 import UserAppointments from './UserAppointments';
 import DoctorList from './DoctorList';
+
+const interopDefault = (mod) => (mod && mod.default) || mod;
+const CalendarMonthIcon = interopDefault(CalendarMonthIconImport);
+const MedicationIcon = interopDefault(MedicationIconImport);
+const LogoutIcon = interopDefault(LogoutIconImport);
+const NotificationsIcon = interopDefault(NotificationsIconImport);
 
 const UserHome = () => {
    const [doctors, setDoctors] = useState([])
