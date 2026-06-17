@@ -6,6 +6,7 @@ import CalendarMonthIcon from '@mui/icons-material/esm/CalendarMonth.js';
 import MedicationIcon from '@mui/icons-material/esm/Medication.js';
 import LogoutIcon from '@mui/icons-material/esm/Logout.js';
 import NotificationsIcon from '@mui/icons-material/esm/Notifications.js';
+import PersonIcon from '@mui/icons-material/esm/Person.js';
 import { Container } from 'react-bootstrap';
 
 import ApplyDoctor from './ApplyDoctor';
@@ -82,9 +83,14 @@ const UserHome = () => {
                      <div className={`menu-items ${activeMenuItem === 'userappointments' ? 'active' : ''}`} onClick={() => handleMenuItemClick('userappointments')}>
                         <CalendarMonthIcon className='icon' /><span>Appointments</span>
                      </div>
-                     {userdata.isdoctor === true ? <></> : <div className={`menu-items ${activeMenuItem === 'applyDoctor' ? 'active' : ''}`} onClick={() => handleMenuItemClick('applyDoctor')}>
-                        <MedicationIcon className='icon' /><span>Apply doctor</span>
-                     </div>}
+                     {userdata.isdoctor === true ? <></> : <>
+                        <div className={`menu-items ${activeMenuItem === 'browseDoctors' ? 'active' : ''}`} onClick={() => handleMenuItemClick('browseDoctors')}>
+                           <PersonIcon className='icon' /><span>Book Appointment</span>
+                        </div>
+                        <div className={`menu-items ${activeMenuItem === 'applyDoctor' ? 'active' : ''}`} onClick={() => handleMenuItemClick('applyDoctor')}>
+                           <MedicationIcon className='icon' /><span>Apply doctor</span>
+                        </div>
+                     </>}
                      
                      
                      <div className="menu-items" onClick={logout}>
@@ -108,10 +114,9 @@ const UserHome = () => {
                      {activeMenuItem === 'applyDoctor' && <ApplyDoctor userId={userdata._id} />}
                      {activeMenuItem === 'notification' && <Notification />}
                      {activeMenuItem === 'userappointments' && <UserAppointments />}
-                     {activeMenuItem !== 'applyDoctor' && activeMenuItem !== 'notification' && activeMenuItem !== 'userappointments' && <Container>
-                        <h2 className="text-center p-2">Home</h2>
-                        
-                        {userdata.isdoctor === true ? <></> : <Row>
+                     {activeMenuItem === 'browseDoctors' && <Container>
+                        <h2 className="text-center p-2">Book Appointment</h2>
+                        {userdata.isdoctor === true ? <p className="text-center">Doctors cannot book appointments</p> : <Row>
                            {doctors && doctors.map((doctor, i) => {
                               let notifyDoc = doctor.userId
                               return (

@@ -31,35 +31,50 @@ const DoctorList = ({ userDoctorId, doctor, userdata }) => {
    console.log(doctor._id)
    const handleBook = async (e) => {
       e.preventDefault()
+      
+      // Validate required fields
+      if (!dateTime) {
+         message.error('Please select a date and time');
+         return;
+      }
+      if (!userdata || !userdata._id) {
+         message.error('User data is missing');
+         return;
+      }
+      
       try {
          const formattedDateTime = dateTime.replace('T', ' ');
          const formData = new FormData();
          if (documentFile) {
-            formData.append('image', documentFile); // only append if file selected
+            formData.append('image', documentFile);
          }
          formData.append('date', formattedDateTime);
-         formData.append('userId', userDoctorId);
+         formData.append('userId', userdata._id);  // Use user's own ID, not doctor's userId
          formData.append('doctorId', doctor._id);
          formData.append('userInfo', JSON.stringify(userdata));
          formData.append('doctorInfo', JSON.stringify(doctor));
 
+         console.log('Booking appointment:', { userId: userdata._id, doctorId: doctor._id, date: formattedDateTime });
+
          const res = await axios.post('http://localhost:2000/api/user/getappointment', formData, {
             headers: {
                Authorization: `Bearer ${localStorage.getItem("token")}`,
-               'Content-Type': 'multipart/form-data',
+               // Don't set Content-Type - axios will set it automatically with correct boundary
             },
          });
          
          if (res.data.success) {
             message.success(res.data.message)
+            setDateTime('');
+            setDocumentFile(null);
             setShow(false);
          }
          else {
             message.error(res.data.message || 'Booking failed')
          }
       } catch (error) {
-         console.log(error)
-         const errMsg = error?.response?.data?.message || 'Something went wrong while booking';
+         console.error('Booking error:', error)
+         const errMsg = error?.response?.data?.message || error?.message || 'Something went wrong while booking';
          message.error(errMsg);
       }
    }
