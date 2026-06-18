@@ -34,6 +34,9 @@ const UserAppointments = () => {
         params: {
           userId: uid,
         },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       if (res.data.success) {
         message.success(res.data.message);
@@ -53,6 +56,9 @@ const UserAppointments = () => {
       const res = await axios.get('http://localhost:2000/api/doctor/getdoctorappointments', {
         params: {
           userId: uid,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       if (res.data.success) {
